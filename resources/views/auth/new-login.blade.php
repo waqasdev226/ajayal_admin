@@ -66,6 +66,7 @@
             <!-- Login -->
             <div class="card">
                 <div class="card-body">
+                    <h2>test</h2>
                     <!-- Logo -->
 {{--                    <div class="app-brand justify-content-center mb-4 mt-2">--}}
 {{--                        <a href="index.html" class="app-brand-link gap-2">--}}
