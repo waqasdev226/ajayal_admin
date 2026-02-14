@@ -108,12 +108,13 @@ class CalculationController extends Controller
                 $ratio = $previous_ratio + 0.1;
             }
         } else {
-            $ratio = $user->min_ratio;
-            if ($ratio==0){
-                $ratio = (float)Setting::where('key','min_ratio')->first()->value;
+            $ratio = (float) ($user->min_ratio ?? 0);
+            if ($ratio <= 0) {
+                $setting = Setting::where('key', 'min_ratio')->first();
+                $ratio = $setting ? (float) $setting->value : 1;
             }
         }
-        return $ratio;
+        return $ratio > 0 ? $ratio : 1;
     }
 
     function getInvestorDays($id, $ratio, $type=null): float

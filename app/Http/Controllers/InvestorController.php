@@ -288,18 +288,15 @@ if($ratio==0)$ratio=1;
                 $data['cash'] = (float)$request->input('cash');
                 $calculation = new CalculationController();
 
-                error_log('cash: '.(float)$request->input('cash'));
                 $month_days = Carbon::now()->daysInMonth;
                 $ratio = $calculation->getInvestorCurrentRatio($id);
-                error_log('ratio: '.$ratio);
+                if ($ratio <= 0) {
+                    $ratio = 1;
+                }
                 $total_month_profit = $user->cash / $ratio;
-                error_log('total_month_profit: '.$total_month_profit);
-                $profit_per_day = $total_month_profit / $month_days;
-                error_log('profit_per_day: '.$profit_per_day);
+                $profit_per_day = $month_days > 0 ? $total_month_profit / $month_days : 0;
                 $days = Carbon::now()->day;
-                error_log('days: '.$days);
                 $total_days_profit = ($month_days - $days) * $profit_per_day;
-                error_log('total_days_profit: '.$total_days_profit);
                 $data = array(
                     'user_id' => $id,
                     'cash' => (float)$request->input('cash'),
