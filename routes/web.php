@@ -34,7 +34,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 //    return view('dashboard');
 //})->middleware(['auth', 'verified'])->name('dashboard');
 //require __DIR__.'/auth.php';
-Route::middleware('guest:agent')->group(function () {
+Route::middleware('guest')->group(function () {
 //    Route::get('register', [RegisteredUserController::class, 'create'])
 //        ->name('register');
 //
@@ -57,7 +57,7 @@ Route::middleware('guest:agent')->group(function () {
 //    Route::post('reset-password', [NewPasswordController::class, 'store'])
 //        ->name('password.store');
 });
-Route::middleware('auth:agent')->group(function () {
+Route::middleware('auth')->group(function () {
 //    Route::get('verify-email', EmailVerificationPromptController::class)
 //        ->name('verification.notice');
 //
@@ -80,7 +80,7 @@ Route::middleware('auth:agent')->group(function () {
         ->name('logout');
 });
 
-Route::middleware('auth:agent')->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/', [\App\Http\Controllers\DashboardController::class, 'index'])->name('home');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/pass-change', [ProfileController::class, 'passwordChange'])->name('profile.password');

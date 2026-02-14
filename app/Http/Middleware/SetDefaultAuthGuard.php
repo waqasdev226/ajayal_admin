@@ -16,9 +16,11 @@ class SetDefaultAuthGuard
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Admin panel: only agents can log in, so default guard is agent when authenticated.
+        // Admin panel: allow both agents and users (admin investors). Set default guard so Auth::user() works.
         if (Auth::guard('agent')->check()) {
             config(['auth.defaults.guard' => 'agent']);
+        } elseif (Auth::guard('web')->check()) {
+            config(['auth.defaults.guard' => 'web']);
         }
 
         return $next($request);

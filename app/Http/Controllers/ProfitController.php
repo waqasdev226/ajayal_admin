@@ -52,18 +52,21 @@ class ProfitController extends Controller
     public function approve(Request $request, $id){
         $profits = ProfitRatioLog::where('id', $id)->get();
         foreach ($profits as $profit) {
-            $user = User::find($profit->user_id);
+            $user = User::withTrashed()->find($profit->user_id);
+            if (! $user) {
+                continue;
+            }
             ProfitRatioLog::where('id', $profit->id)->update(['status'=>1]);
             User::where('id', $profit->user_id)->increment('profit', $profit->total);
             User::where('id', $profit->user_id)->increment('total_profit', $profit->total);
-            $post_data = User::find($profit->user_id);
+            $post_data = User::withTrashed()->find($profit->user_id);
             LogController::Auditlog( 'update', 'User', $profit->user_id, $user, $post_data, 'update user: '.$profit->user_id, $request);
 
             $transaction = new Transactions();
             $transaction->from = 0;
             $transaction->to = $profit->user_id;
             $transaction->amount = $profit->total;
-            $transaction->current_profit = $user->profit;
+            $transaction->current_profit = $user->profit + $profit->total;
             $transaction->type = 'profit';
             $transaction->status = 1;
             $transaction->save();

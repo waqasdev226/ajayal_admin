@@ -42,14 +42,20 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         try {
-            // Admin panel: only agents (admins) can log in. Investors (users table) cannot access the panel.
-            if (! Auth::guard('agent')->attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-                RateLimiter::hit($this->throttleKey());
-                throw ValidationException::withMessages([
-                    'email' => trans('auth.failed'),
-                ]);
+            // Allow both agents (agents table) and admin users (users table) to log in to the admin dashboard.
+            if (Auth::guard('agent')->attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+                RateLimiter::clear($this->throttleKey());
+                return;
             }
-            RateLimiter::clear($this->throttleKey());
+            if (Auth::guard('web')->attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+                RateLimiter::clear($this->throttleKey());
+                return;
+            }
+
+            RateLimiter::hit($this->throttleKey());
+            throw ValidationException::withMessages([
+                'email' => trans('auth.failed'),
+            ]);
         } catch (ValidationException $e) {
             throw $e;
         } catch (\Throwable $e) {
