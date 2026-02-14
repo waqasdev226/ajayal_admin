@@ -31,7 +31,8 @@ class ResetUserPassword extends Command
         $email = $this->argument('email');
         $password = $this->argument('password');
 
-        $user = User::where('email', $email)->first();
+        // Include soft-deleted users so we can reset and restore them
+        $user = User::withTrashed()->where('email', $email)->first();
 
         if (! $user) {
             $this->error("User with email [{$email}] not found.");
@@ -39,6 +40,10 @@ class ResetUserPassword extends Command
         }
 
         $user->password = $password;
+        if ($user->trashed()) {
+            $user->restore();
+            $this->info("User was soft-deleted; restored.");
+        }
         $user->save();
 
         $this->info("Password reset successfully for [{$email}].");
