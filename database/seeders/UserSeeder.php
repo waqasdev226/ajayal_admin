@@ -4,20 +4,20 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     * Use raw password; User model's 'hashed' cast hashes it.
      */
     public function run(): void
     {
-        // Create Admin User
+        // Create Admin User (password: password)
         User::create([
             'name' => 'Admin User',
             'email' => 'admin@admin.com',
-            'password' => Hash::make('password'),
+            'password' => 'password',
             'phone' => '+1234567890',
             'enabled' => true,
             'reference' => 'ADM001',
@@ -31,11 +31,11 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        // Create Test User
+        // Create Test User (password: password)
         User::create([
             'name' => 'Test User',
             'email' => 'test@test.com',
-            'password' => Hash::make('password'),
+            'password' => 'password',
             'phone' => '+9876543210',
             'enabled' => true,
             'reference' => 'USR001',
@@ -49,11 +49,11 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        // Create Investor User
+        // Create Investor User (password: password)
         User::create([
             'name' => 'Investor User',
             'email' => 'investor@example.com',
-            'password' => Hash::make('password'),
+            'password' => 'password',
             'phone' => '+5555555555',
             'enabled' => true,
             'reference' => 'INV001',

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use Illuminate\Auth\Events\Lockout;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -41,11 +42,29 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
+        try {
+            if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+                RateLimiter::hit($this->throttleKey());
+
+                throw ValidationException::withMessages([
+                    'email' => __('auth.failed'),
+                ]);
+            }
+        } catch (ValidationException $e) {
+            throw $e;
+        } catch (QueryException $e) {
+            $message = ($e->getCode() === '1045' || str_contains($e->getMessage(), 'Access denied'))
+                ? __('Database connection failed. Please contact the administrator.')
+                : (config('app.debug') ? $e->getMessage() : __('Something went wrong. Please try again.'));
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'email' => $message,
+            ]);
+        } catch (\Throwable $e) {
+            $message = config('app.debug') ? $e->getMessage() : __('Something went wrong. Please try again.');
+
+            throw ValidationException::withMessages([
+                'email' => $message,
             ]);
         }
 

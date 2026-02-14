@@ -12,6 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // MySQL only – SQLite does not support ALTER DATABASE / charset
+        if (DB::getDriverName() !== 'mysql') {
+            return;
+        }
+
         // Set database default charset
         $database = env('DB_DATABASE', 'laravel');
         
