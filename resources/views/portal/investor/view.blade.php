@@ -235,20 +235,11 @@
                                     <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
                                 </div>
                                 <div class="col-12 col-md-6">
-                                    <label class="form-label" for="modalEditUserStatus">{{__('all.currency')}}</label>
-                                    <div class="position-relative">
-                                        @if($data->currency == null)
-                                            <select id="modalEditUserStatus" name="currency" class="select2 form-select select2-hidden-accessible" aria-label="Default select example"
-                                                    data-select2-id="modalEditUserStatus" tabindex="-1" aria-hidden="true" data-value="{{$data->currency}}">
-                                                <option value="IQD" {{ $data->currency == 'IQDّ' ? 'selected' : ''}}>IQD</option>
-                                                <option value="USD" {{ $data->currency == 'USD' ? 'selected' : ''}}>USD</option>
-                                            </select>
-                                        @else
-                                            <input type="text" id="currency" name="currency" class="form-control" value="{{$data->currency}}" style="pointer-events: none;background-color:#E9ECEF">
-
-                                        @endif
-
-                                    </div>
+                                    <label class="form-label" for="currency">{{__('all.currency')}}</label>
+                                    <select id="currency" name="currency" class="form-select">
+                                        <option value="IQD" {{ ($data->currency ?? '') == 'IQD' ? 'selected' : '' }}>Iraq (IQD)</option>
+                                        <option value="USD" {{ ($data->currency ?? '') == 'USD' ? 'selected' : '' }}>USD</option>
+                                    </select>
                                 </div>
                                 <div class="col-12 col-md-6 fv-plugins-icon-container">
                                     <label class="form-label" for="name">{{__('all.min_ratio')}}</label>
