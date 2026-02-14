@@ -42,13 +42,14 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         try {
-            if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+            // Admin panel: only agents (admins) can log in. Investors (users table) cannot access the panel.
+            if (! Auth::guard('agent')->attempt($this->only('email', 'password'), $this->boolean('remember'))) {
                 RateLimiter::hit($this->throttleKey());
-
                 throw ValidationException::withMessages([
                     'email' => trans('auth.failed'),
                 ]);
             }
+            RateLimiter::clear($this->throttleKey());
         } catch (ValidationException $e) {
             throw $e;
         } catch (\Throwable $e) {

@@ -50,11 +50,16 @@ class ProfileController extends Controller
 
         ])->validate();
 
-        Agent::where('id', Auth::id())->update(['password'=>Hash::make($request->input('password'))]);
+        $user = $request->user();
+        if ($user) {
+            $user->password = Hash::make($request->input('password'));
+            $user->save();
+        }
 
-        Auth::logout();
+        Auth::guard('web')->logout();
+        Auth::guard('agent')->logout();
 
-        return Redirect::route('home')->with('status', 'profile-updated');
+        return Redirect::route('login')->with('status', 'profile-updated');
     }
 
     /**
@@ -68,7 +73,8 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        Auth::logout();
+        Auth::guard('web')->logout();
+        Auth::guard('agent')->logout();
 
         $user->delete();
 

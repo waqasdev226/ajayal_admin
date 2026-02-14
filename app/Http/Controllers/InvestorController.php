@@ -21,7 +21,7 @@ class InvestorController extends Controller
         $filter = new \stdClass();
         $filter->search = $search;
 
-        $data = User::withTrashed();
+        $data = User::query();
 
         if ($search) {
             $data->where('name', 'like', "%$search%")
