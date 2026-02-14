@@ -47,7 +47,7 @@
                     <h6 class="mb-0">{{ $cancel->currency }}  {{number_format($cancel->net_profit,2)}}</h6>
                 </div>
                 <div class="d-grid mt-3">
-                    <form action="{{route('investor.cancelContract', $data->id)}}" method="POST">
+                    <form action="{{ route('investor.finishContract', $data->id) }}" method="POST" onsubmit="return confirm('{{ __('all.confirm_delete_investor') }}');">
                         @csrf
                     <button type="submit" class="btn btn-success waves-effect waves-light">
                         <span class="me-2">الغاء العقد</span>
