@@ -107,7 +107,11 @@
                                     <td>
                                         <div class="d-inline-block text-nowrap">
                                             @if($row->deleted_at == null)
-                                                <a class="btn btn-sm btn-icon delete-record" href="{{ route('investor.showGeneral', $row->id) }}"><i class="ti ti-eye"></i></a>
+                                                <a class="btn btn-sm btn-icon" href="{{ route('investor.showGeneral', $row->id) }}" title="{{ __('all.show') }}"><i class="ti ti-eye"></i></a>
+                                                <form action="{{ route('investor.finishContract', $row->id) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('all.confirm_delete_investor') }}');">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-icon text-danger" title="{{ __('all.delete') }}"><i class="ti ti-trash"></i></button>
+                                                </form>
                                             @else
                                                 <span class="badge bg-label-danger">تم المسح</span>
                                             @endif

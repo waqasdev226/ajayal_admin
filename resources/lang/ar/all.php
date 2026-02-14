@@ -6,6 +6,8 @@ return [
     'list'  => 'قائمة',
     'show'  => 'عرض',
     'add'  => 'أضافة',
+    'delete'  => 'حذف',
+    'confirm_delete_investor'  => 'هل أنت متأكد من حذف هذا المستثمر؟',
     'edit'  => 'تعديل',
     'details'  => 'التفاصيل',
     'submit'  => 'موافق',

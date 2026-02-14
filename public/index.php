@@ -1,5 +1,10 @@
 <?php
 
+// Hide PHP 8.5+ deprecation notices in output (vendor libs not yet updated)
+if (PHP_VERSION_ID >= 80500) {
+    error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+}
+
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 

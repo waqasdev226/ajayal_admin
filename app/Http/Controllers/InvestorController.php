@@ -179,57 +179,53 @@ if($ratio==0)$ratio=1;
 
     public function store (Request $request) {
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'phone' => 'required|unique:users',
-            'cash' => 'required',
-            'currency' => 'required',
-            'expire_contract' => 'required',
-        ])->validate();
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone' => 'required|unique:users,phone',
+            'cash' => 'required|numeric|min:0',
+            'currency' => 'required|in:IQD,USD',
+            'expire_contract' => 'required|date',
+            'contract_ref' => 'nullable|string|max:255',
+        ], [
+            'name.required' => __('Please enter the investor name.'),
+            'phone.unique' => __('This phone number is already registered.'),
+        ]);
 
-//        if ($validator->fails()) {
-//            return redirect()
-//                ->route('investor.index')
-//                ->withErrors($validator->errors())
-//                ->withInput();
-//        }
+        if ($validator->fails()) {
+            return redirect()->route('investor.index')
+                ->withErrors($validator)
+                ->withInput();
+        }
 
-//        if ($validator->fails()) {
-//            return redirect('investor/list')
-//                ->withErrors($validator)
-//                ->withInput();
-//        }
+        try {
+            $minRatioSetting = Setting::where('key', 'min_ratio')->first();
+            $maxRatioSetting = Setting::where('key', 'max_ratio')->first();
+            $minRatio = $minRatioSetting ? (float) $minRatioSetting->value : 5;
+            $maxRatio = $maxRatioSetting ? (float) $maxRatioSetting->value : 15;
+        } catch (\Throwable $e) {
+            return redirect()->route('investor.index')
+                ->with('error', __('Something went wrong. Please try again.'))
+                ->withInput();
+        }
 
         $data = array(
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => Hash::make('1@#$1Q'),
             'phone' => $request->input('phone'),
-//            'enabled' => $request->input('enabled'),
             'reference' => 'AL_'.(string)((User::count() * 5) + 2500),
             'cash' => (float)$request->input('cash'),
-//            'profit' => $request->input('profit'),
-//            'total_profit' => $request->input('total_profit'),
-            'min_ratio' => (float)Setting::where('key','min_ratio')->first()->value,
-            'max_ratio' => (float)Setting::where('key','max_ratio')->first()->value,
+            'min_ratio' => $minRatio,
+            'max_ratio' => $maxRatio,
             'currency' => $request->input('currency'),
             'expire_contract' => $request->input('expire_contract'),
             'city' => $request->input('city'),
             'insurance' => $request->input('insurance'),
-            'enabled' => $request->input('enabled'),
+            'enabled' => $request->input('enabled', 1),
             'contract_ref' => $request->input('contract_ref'),
-//            'wdr_method' => $request->input('wdr_method'),
-//            'wdr_phone' => $request->input('wdr_phone'),
-//            'wdr_name' => $request->input('wdr_name'),
-//            'wdr_passport' => $request->input('wdr_passport'),
-//            'wdr_bank_account' => $request->input('wdr_bank_account'),
-//            'wdr_swift' => $request->input('wdr_swift'),
-//            'wdr_card_no' => $request->input('wdr_card_no'),
         );
 
-
         $user = User::create($data);
-//        $post_data = User::find($id);
-//        $user->update($data);
 
         LogController::Auditlog( 'add', 'User', $user->id, $user, $user, 'update user', $request);
 
