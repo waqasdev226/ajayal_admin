@@ -187,7 +187,7 @@ if($ratio==0)$ratio=1;
     public function store (Request $request) {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users,email',
             'phone' => 'required|unique:users,phone',
             'cash' => 'required|numeric|min:0',
             'currency' => 'required|in:IQD,USD',
@@ -195,7 +195,8 @@ if($ratio==0)$ratio=1;
             'contract_ref' => 'nullable|string|max:255',
         ], [
             'name.required' => __('Please enter the investor name.'),
-            'phone.unique' => __('This phone number is already registered.'),
+            'email.unique' => __('all.email_already_registered'),
+            'phone.unique' => __('all.phone_already_registered'),
         ]);
 
         if ($validator->fails()) {
@@ -232,7 +233,16 @@ if($ratio==0)$ratio=1;
             'contract_ref' => $request->input('contract_ref'),
         );
 
-        $user = User::create($data);
+        try {
+            $user = User::create($data);
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() === '23000' && str_contains($e->getMessage(), 'Duplicate entry')) {
+                return redirect()->route('investor.index')
+                    ->with('error', __('all.email_or_phone_already_registered'))
+                    ->withInput();
+            }
+            throw $e;
+        }
 
         LogController::Auditlog( 'add', 'User', $user->id, $user, $user, 'update user', $request);
 
@@ -253,7 +263,7 @@ if($ratio==0)$ratio=1;
             'name.required' => __('Please enter the investor name.'),
             'email.required' => __('Please enter a valid email.'),
             'phone.required' => __('Phone is required.'),
-            'phone.unique' => __('This phone number is already registered.'),
+            'phone.unique' => __('all.phone_already_registered'),
             'currency.in' => __('Currency must be Iraq (IQD) or USD.'),
         ]);
 

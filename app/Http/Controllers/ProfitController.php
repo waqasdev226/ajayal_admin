@@ -63,7 +63,7 @@ class ProfitController extends Controller
             LogController::Auditlog( 'update', 'User', $profit->user_id, $user, $post_data, 'update user: '.$profit->user_id, $request);
 
             $transaction = new Transactions();
-            $transaction->from = 0;
+            $transaction->from = null;
             $transaction->to = $profit->user_id;
             $transaction->amount = $profit->total;
             $transaction->current_profit = $user->profit + $profit->total;
