@@ -187,4 +187,13 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+    /*
+    |--------------------------------------------------------------------------
+    | User IDs excluded from investor list and profit calculation
+    |--------------------------------------------------------------------------
+    | These users (e.g. super admin) are not shown as investors and do not
+    | receive profit. Add more IDs as needed.
+    */
+    'exclude_investor_user_ids' => array_filter(array_map('intval', explode(',', env('EXCLUDE_INVESTOR_USER_IDS', '1')))),
+
 ];

@@ -21,7 +21,8 @@ class InvestorController extends Controller
         $filter = new \stdClass();
         $filter->search = $search;
 
-        $data = User::query();
+        $excludeIds = config('app.exclude_investor_user_ids', [1]);
+        $data = User::query()->when(! empty($excludeIds), fn ($q) => $q->whereNotIn('id', $excludeIds));
 
         if ($search) {
             $data->where('name', 'like', "%$search%")

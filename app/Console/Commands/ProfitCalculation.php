@@ -31,7 +31,11 @@ class ProfitCalculation extends Command
      */
     public function handle()
     {
-        $investors = User::where('enabled',1)->where('cash','>',0)->whereDate('expire_contract', '>', Carbon::now())->whereNot('id',1)->get();
+        $excludeIds = config('app.exclude_investor_user_ids', [1]);
+        $investors = User::where('enabled', 1)->where('cash', '>', 0)
+            ->whereDate('expire_contract', '>', Carbon::now())
+            ->when(! empty($excludeIds), fn ($q) => $q->whereNotIn('id', $excludeIds))
+            ->get();
         $now = Carbon::parse(Carbon::now())->format('Y-m');
         $controller = new CalculationController();
         foreach ($investors as $investor) {
