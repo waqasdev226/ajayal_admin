@@ -127,8 +127,8 @@
                                                     <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
                                                 </div>
                                                 <div class="mb-3 fv-plugins-icon-container">
-                                                    <label class="form-label" for="ecommerce-customer-add-email">{{__('all.password')}}*</label>
-                                                    <input type="password" id="ecommerce-customer-add-email" class="form-control" placeholder="john.doe@example.com" aria-label="john.doe@example.com" name="password">
+                                                    <label class="form-label" for="ecommerce-customer-add-password">{{__('all.password')}}*</label>
+                                                    <input type="password" id="ecommerce-customer-add-password" class="form-control" placeholder="••••••••" aria-label="{{ __('all.password') }}" name="password">
                                                     <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
                                                 </div>
                                                 <div class="mb-3 fv-plugins-icon-container">
@@ -205,8 +205,8 @@
                                     <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
                                 </div>
                                 <div class="mb-3 fv-plugins-icon-container">
-                                    <label class="form-label" for="ecommerce-customer-add-email">{{__('all.password')}}*</label>
-                                    <input type="password" id="ecommerce-customer-add-email" class="form-control" placeholder="john.doe@example.com" aria-label="john.doe@example.com" name="password">
+                                    <label class="form-label" for="ecommerce-customer-add-password-new">{{__('all.password')}}*</label>
+                                    <input type="password" id="ecommerce-customer-add-password-new" class="form-control" placeholder="••••••••" aria-label="{{ __('all.password') }}" name="password">
                                     <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
                                 </div>
                                 <div class="mb-3 fv-plugins-icon-container">

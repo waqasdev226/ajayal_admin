@@ -135,12 +135,8 @@ if($ratio==0)$ratio=1;
     public function finishContract (Request $request, $id) {
         $targetUserId = (int) $id;
 
-        // Only block if the logged-in user is from the users table (same table we're deleting from)
-        // and is the same record. Admins may log in as Agent (agents table); do not block in that case.
-        if (Auth::guard('web')->check() && (int) Auth::guard('web')->id() === $targetUserId) {
-            return redirect()->route('investor.index')
-                ->with('error', __('all.cannot_delete_current_user'));
-        }
+        // Allow admin to end any investor contract. If they end their own, we logout after delete.
+        $isDeletingSelf = Auth::guard('web')->check() && (int) Auth::guard('web')->id() === $targetUserId;
 
         $investor = User::find($targetUserId);
         if (! $investor) {
@@ -179,6 +175,13 @@ if($ratio==0)$ratio=1;
         $investor->update();
 
         User::where('id', $targetUserId)->delete();
+
+        if ($isDeletingSelf) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect()->route('login')->with('status', __('all.contract_ended_logged_out'));
+        }
 
         return redirect()->route('investor.index');
     }

@@ -37,23 +37,21 @@ class UsersController extends Controller
     {
 
         $validated = Validator::make($request->all(), [
-            'email' => 'required',
-            'password' => 'required',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'password' => 'required|string|min:6',
         ]);
 
-        if ($validated->fails())
-        {
-            return redirect()->route('users.index')->withErrors($validated);
+        if ($validated->fails()) {
+            return redirect()->route('users.index')->withErrors($validated)->withInput();
         }
-
-        error_log($request->input('password'));
 
         $data = array(
             'name' => $request->input('name'),
             'email' => $request->input('email'),
-            'enabled' => $request->input('enabled', 1),
-            'type'   => $request->input('type', 2),
-            'password'   => Hash::make($request->input('password'))
+            'enabled' => (int) $request->input('enabled', 1),
+            'type' => (int) $request->input('type', 2),
+            'password' => Hash::make($request->input('password')),
         );
 
         Agent::create($data);
