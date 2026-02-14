@@ -233,14 +233,28 @@ if($ratio==0)$ratio=1;
     }
 
     public function update (Request $request, $id) {
-        error_log($request->input('cash'));
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'phone' => 'required',
-            'expire_contract' => 'required',
-            'cash' => 'required|numeric|gt:0',
-            'currency' => 'required',
-        ])->validate();
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone' => 'required|string|max:100|unique:users,phone,' . $id,
+            'expire_contract' => 'required|date',
+            'cash' => 'required|numeric|min:0',
+            'currency' => 'required|in:IQD,USD',
+            'min_ratio' => 'nullable|numeric|min:0',
+            'max_ratio' => 'nullable|numeric|min:0',
+        ], [
+            'name.required' => __('Please enter the investor name.'),
+            'email.required' => __('Please enter a valid email.'),
+            'phone.required' => __('Phone is required.'),
+            'phone.unique' => __('This phone number is already registered.'),
+            'currency.in' => __('Currency must be Iraq (IQD) or USD.'),
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('investor.showGeneral', $id)
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $post_data = User::find($id);
         $data = array(

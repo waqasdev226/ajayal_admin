@@ -179,14 +179,25 @@
                             </div>
                             <form id="editUserForm" class="row g-3 fv-plugins-bootstrap5 fv-plugins-framework" action="{{ route('investor.update', $data->id) }}" method="post" enctype="multipart/form-data">
                                 @csrf
+                                @if($errors->any())
+                                    <div class="col-12">
+                                        <div class="alert alert-danger">
+                                            <ul class="mb-0">
+                                                @foreach($errors->all() as $err)
+                                                    <li>{{ $err }}</li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                    </div>
+                                @endif
                                 <div class="col-12 fv-plugins-icon-container">
                                     <label class="form-label" for="name">{{__('all.name')}}</label>
-                                    <input type="text" id="name" name="name" class="form-control" value="{{$data->name}}">
+                                    <input type="text" id="name" name="name" class="form-control" value="{{ old('name', $data->name) }}">
                                     <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
                                 </div>
                                 <div class="col-12 col-md-6 fv-plugins-icon-container">
                                     <label class="form-label" for="name">{{__('all.phone')}}</label>
-                                    <input type="text" id="phone" name="phone" class="form-control" value="{{$data->phone}}">
+                                    <input type="text" id="phone" name="phone" class="form-control" value="{{ old('phone', $data->phone) }}">
                                     <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
                                 </div>
                                 <div class="col-12 col-md-6 fv-plugins-icon-container">
@@ -196,7 +207,7 @@
                                 </div>
                                 <div class="col-12 col-md-6">
                                     <label class="form-label" for="email">Email</label>
-                                    <input type="text" id="email" name="email" class="form-control" value="{{$data->email}}">
+                                    <input type="text" id="email" name="email" class="form-control" value="{{ old('email', $data->email) }}">
                                 </div>
                                 <div class="col-12 col-md-6 fv-plugins-icon-container">
                                     <label class="form-label" for="city">{{__('all.city')}}</label>
