@@ -107,11 +107,7 @@
                                     <td>
                                         <div class="d-inline-block text-nowrap">
                                             @if($row->deleted_at == null)
-                                                <a class="btn btn-sm btn-icon" href="{{ route('investor.showGeneral', $row->id) }}" title="{{ __('all.show') }}"><i class="ti ti-eye"></i></a>
-                                                <form action="{{ route('investor.finishContract', $row->id) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ __('all.confirm_delete_investor') }}');">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-sm btn-icon text-danger" title="{{ __('all.delete') }}"><i class="ti ti-trash"></i></button>
-                                                </form>
+                                                <a class="btn btn-sm btn-icon delete-record" href="{{ route('investor.showGeneral', $row->id) }}"><i class="ti ti-eye"></i></a>
                                             @else
                                                 <span class="badge bg-label-danger">تم المسح</span>
                                             @endif
@@ -158,63 +154,46 @@
                         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
                     <div class="offcanvas-body mx-0 flex-grow-0">
-                        @if(session('error'))
-                            <div class="alert alert-danger alert-dismissible mb-3" role="alert">
-                                {{ session('error') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        @endif
-                        @if($errors->any())
-                            <div class="alert alert-danger alert-dismissible mb-3" role="alert">
-                                <ul class="mb-0 list-unstyled">
-                                    @foreach($errors->all() as $err)
-                                        <li>{{ $err }}</li>
-                                    @endforeach
-                                </ul>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        @endif
                         <form class="ecommerce-customer-add pt-0 fv-plugins-bootstrap5 fv-plugins-framework" id="eCommerceCustomerAddForm" action="{{ route('investor.store') }}" method="post">
                             @csrf
                             <div class="ecommerce-customer-add-basic mb-3">
                                 <h6 class="mb-3">{{__('all.add')}} {{__('all.investor')}}</h6>
                                 <div class="mb-3 fv-plugins-icon-container">
                                     <label class="form-label" for="name">{{__('all.name')}}*</label>
-                                    <input type="text" class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" id="name" placeholder="" name="name" value="{{ old('name') }}" aria-label="">
-                                    @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    <input type="text" class="form-control" id="name" placeholder="" name="name" aria-label="">
+                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
                                 </div>
                                 <div class="mb-3 fv-plugins-icon-container">
                                     <label class="form-label" for="email">{{__('all.email')}}*</label>
-                                    <input type="text" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" id="email" placeholder="" name="email" value="{{ old('email') }}" aria-label="">
-                                    @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    <input type="text" class="form-control" id="email" placeholder="" name="email" aria-label="">
+                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
                                 </div>
                                 <div class="mb-3 fv-plugins-icon-container">
                                     <label class="form-label" for="phone">{{__('all.phone')}}*</label>
-                                    <input type="text" class="form-control {{ $errors->has('phone') ? 'is-invalid' : '' }}" id="phone" placeholder="" name="phone" value="{{ old('phone') }}" aria-label="">
-                                    @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    <input type="text" class="form-control" id="phone" placeholder="" name="phone" aria-label="">
+                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
                                 </div>
                                 <div class="mb-3 fv-plugins-icon-container">
                                     <label class="form-label" for="cash">{{__('all.cash')}}*</label>
-                                    <input type="number" class="form-control {{ $errors->has('cash') ? 'is-invalid' : '' }}" id="cash" placeholder="" name="cash" value="{{ old('cash') }}" aria-label="">
-                                    @error('cash')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    <input type="number" class="form-control" id="cash" placeholder="" name="cash" aria-label="">
+                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
                                 </div>
                                 <div class="mb-3 fv-plugins-icon-container">
                                     <label class="form-label" for="modalEditUserStatus">{{__('all.currency')}}</label>
-                                    <select id="modalEditUserStatus" name="currency" class="select2 form-select {{ $errors->has('currency') ? 'is-invalid' : '' }}">
-                                        <option value="IQD" {{ old('currency') == 'IQD' ? 'selected' : '' }}>Iraq (IQD)</option>
-                                        <option value="USD" {{ old('currency') == 'USD' ? 'selected' : '' }}>USD</option>
+                                    <select id="modalEditUserStatus" name="currency" class="select2 form-select select2-hidden-accessible">
+                                        <option value="IQD">IQD</option>
+                                        <option value="USD">USD</option>
                                     </select>
-                                    @error('currency')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="mb-3 fv-plugins-icon-container">
                                     <label class="form-label" for="expire_contract">{{__('all.expire_contract')}}*</label>
-                                    <input type="date" class="form-control {{ $errors->has('expire_contract') ? 'is-invalid' : '' }}" id="expire_contract" placeholder="" name="expire_contract" value="{{ old('expire_contract') }}" aria-label="">
-                                    @error('expire_contract')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    <input type="date" class="form-control" id="expire_contract" placeholder="" name="expire_contract" aria-label="">
+                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
                                 </div>
                                 <div class="mb-3 fv-plugins-icon-container">
                                     <label class="form-label" for="contract_ref">{{__('all.contract_ref')}}*</label>
-                                    <input type="text" class="form-control {{ $errors->has('contract_ref') ? 'is-invalid' : '' }}" id="contract_ref" placeholder="" name="contract_ref" value="{{ old('contract_ref') }}" aria-label="">
-                                    @error('contract_ref')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    <input type="text" class="form-control" id="contract_ref" placeholder="" name="contract_ref" aria-label="">
+                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
                                 </div>
                                 <div class="d-sm-flex mb-3 pt-3">
 
@@ -400,14 +379,4 @@
 
         <div class="content-backdrop fade"></div>
     </div>
-    @if($errors->any() || session('error'))
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var el = document.getElementById('offcanvasEcommerceCustomerAdd');
-                if (el && typeof bootstrap !== 'undefined') {
-                    new bootstrap.Offcanvas(el).show();
-                }
-            });
-        </script>
-    @endif
 @endsection

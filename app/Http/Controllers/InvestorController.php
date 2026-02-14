@@ -179,69 +179,65 @@ if($ratio==0)$ratio=1;
 
     public function store (Request $request) {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email',
-            'phone' => 'required|unique:users,phone',
-            'cash' => 'required|numeric|min:0',
-            'currency' => 'required|in:IQD,USD',
-            'expire_contract' => 'required|date',
-            'contract_ref' => 'nullable|string|max:255',
-        ], [
-            'name.required' => __('Please enter the investor name.'),
-            'email.required' => __('Please enter the email address.'),
-            'email.email' => __('Please enter a valid email address.'),
-            'phone.required' => __('Please enter the phone number.'),
-            'phone.unique' => __('This phone number is already registered.'),
-            'cash.required' => __('Please enter the deposit amount.'),
-            'cash.numeric' => __('Deposit must be a number.'),
-            'currency.required' => __('Please select the currency (Iraq (IQD) or USD).'),
-            'currency.in' => __('Currency must be Iraq (IQD) or USD.'),
-            'expire_contract.required' => __('Please select the contract expiry date.'),
-            'expire_contract.date' => __('Please enter a valid date.'),
-        ]);
+            'name' => 'required',
+            'phone' => 'required|unique:users',
+            'cash' => 'required',
+            'currency' => 'required',
+            'expire_contract' => 'required',
+        ])->validate();
 
-        if ($validator->fails()) {
-            return redirect()
-                ->route('investor.index')
-                ->withErrors($validator)
-                ->withInput();
-        }
+//        if ($validator->fails()) {
+//            return redirect()
+//                ->route('investor.index')
+//                ->withErrors($validator->errors())
+//                ->withInput();
+//        }
 
-        try {
-            $minRatioSetting = Setting::where('key', 'min_ratio')->first();
-            $maxRatioSetting = Setting::where('key', 'max_ratio')->first();
+//        if ($validator->fails()) {
+//            return redirect('investor/list')
+//                ->withErrors($validator)
+//                ->withInput();
+//        }
 
-            $data = array(
-                'name' => $request->input('name'),
-                'email' => $request->input('email'),
-                'password' => Hash::make('1@#$1Q'),
-                'phone' => $request->input('phone'),
-                'reference' => 'AL_'.(string)((User::count() * 5) + 2500),
-                'cash' => (float)$request->input('cash'),
-                'min_ratio' => (float)($minRatioSetting->value ?? 5),
-                'max_ratio' => (float)($maxRatioSetting->value ?? 15),
-                'currency' => $request->input('currency'),
-                'expire_contract' => $request->input('expire_contract'),
-                'city' => $request->input('city'),
-                'insurance' => $request->input('insurance'),
-                'enabled' => $request->input('enabled', 1),
-                'contract_ref' => $request->input('contract_ref'),
-            );
+        $data = array(
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => Hash::make('1@#$1Q'),
+            'phone' => $request->input('phone'),
+//            'enabled' => $request->input('enabled'),
+            'reference' => 'AL_'.(string)((User::count() * 5) + 2500),
+            'cash' => (float)$request->input('cash'),
+//            'profit' => $request->input('profit'),
+//            'total_profit' => $request->input('total_profit'),
+            'min_ratio' => (float)Setting::where('key','min_ratio')->first()->value,
+            'max_ratio' => (float)Setting::where('key','max_ratio')->first()->value,
+            'currency' => $request->input('currency'),
+            'expire_contract' => $request->input('expire_contract'),
+            'city' => $request->input('city'),
+            'insurance' => $request->input('insurance'),
+            'enabled' => $request->input('enabled'),
+            'contract_ref' => $request->input('contract_ref'),
+//            'wdr_method' => $request->input('wdr_method'),
+//            'wdr_phone' => $request->input('wdr_phone'),
+//            'wdr_name' => $request->input('wdr_name'),
+//            'wdr_passport' => $request->input('wdr_passport'),
+//            'wdr_bank_account' => $request->input('wdr_bank_account'),
+//            'wdr_swift' => $request->input('wdr_swift'),
+//            'wdr_card_no' => $request->input('wdr_card_no'),
+        );
 
-            $user = User::create($data);
 
-            LogController::Auditlog('add', 'User', $user->id, $user, $user, 'update user', $request);
+        $user = User::create($data);
+//        $post_data = User::find($id);
+//        $user->update($data);
 
-            return redirect()->route('investor.showGeneral', $user->id);
-        } catch (\Throwable $e) {
-            return redirect()
-                ->route('investor.index')
-                ->withInput()
-                ->with('error', __('Something went wrong. Please check your entries and try again.'));
-        }
+        LogController::Auditlog( 'add', 'User', $user->id, $user, $user, 'update user', $request);
+
+        return redirect()->route('investor.showGeneral', $user->id);
     }
 
     public function update (Request $request, $id) {
+        error_log($request->input('cash'));
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'phone' => 'required',

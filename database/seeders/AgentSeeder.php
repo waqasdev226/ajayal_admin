@@ -4,40 +4,40 @@ namespace Database\Seeders;
 
 use App\Models\Agent;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class AgentSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * Use raw password; Agent model's 'hashed' cast hashes it.
      */
     public function run(): void
     {
-        // Create Super Admin Agent (password: admin123)
+        // Create Super Admin Agent
         Agent::create([
             'name' => 'Super Admin',
             'email' => 'superadmin@admin.com',
-            'password' => 'admin123',
+            'password' => Hash::make('admin123'),
             'enabled' => true,
             'type' => 'super_admin',
             'email_verified_at' => now(),
         ]);
 
-        // Create Admin Agent (password: admin123)
+        // Create Admin Agent
         Agent::create([
             'name' => 'Admin Agent',
             'email' => 'agent@admin.com',
-            'password' => 'admin123',
+            'password' => Hash::make('admin123'),
             'enabled' => true,
             'type' => 'admin',
             'email_verified_at' => now(),
         ]);
 
-        // Create Manager Agent (password: admin123)
+        // Create Manager Agent
         Agent::create([
             'name' => 'Manager',
             'email' => 'manager@admin.com',
-            'password' => 'admin123',
+            'password' => Hash::make('admin123'),
             'enabled' => true,
             'type' => 'manager',
             'email_verified_at' => now(),

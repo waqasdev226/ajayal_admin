@@ -240,12 +240,12 @@
                                         @if($data->currency == null)
                                             <select id="modalEditUserStatus" name="currency" class="select2 form-select select2-hidden-accessible" aria-label="Default select example"
                                                     data-select2-id="modalEditUserStatus" tabindex="-1" aria-hidden="true" data-value="{{$data->currency}}">
-                                                <option value="IQD" {{ $data->currency == 'IQD' ? 'selected' : ''}}>Iraq (IQD)</option>
+                                                <option value="IQD" {{ $data->currency == 'IQDّ' ? 'selected' : ''}}>IQD</option>
                                                 <option value="USD" {{ $data->currency == 'USD' ? 'selected' : ''}}>USD</option>
                                             </select>
                                         @else
-                                            <input type="hidden" name="currency" value="{{ $data->currency }}">
-                                            <input type="text" id="currency" class="form-control" value="{{ $data->currency == 'IQD' ? 'Iraq (IQD)' : 'USD' }}" style="pointer-events: none;background-color:#E9ECEF" readonly>
+                                            <input type="text" id="currency" name="currency" class="form-control" value="{{$data->currency}}" style="pointer-events: none;background-color:#E9ECEF">
+
                                         @endif
 
                                     </div>
