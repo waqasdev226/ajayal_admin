@@ -77,7 +77,7 @@
 {{--                        <span class="app-brand-text demo text-body fw-bold ms-1">Alriada Portal</span>--}}
 {{--                    </div>--}}
                     <div class="card-header">
-                        <img src="{{ asset('assets/img/branding/logo.png') }}" alt="Alriada Logo" style="width: 80%">
+                        <img src="{{ asset('assets/img/branding/logo.png') }}" alt="الآجيال" style="width: 80%">
 
                     </div>
                     <!-- /Logo -->

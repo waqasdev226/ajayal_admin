@@ -8,6 +8,7 @@ use App\Models\Transactions;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Validator;
@@ -132,27 +133,34 @@ if($ratio==0)$ratio=1;
         );
     }
     public function finishContract (Request $request, $id) {
-        $investor = User::find($id);
-        $calculation = new CalculationController();
+        $targetUserId = (int) $id;
 
-        $user = User::where('id',$id)->first();
+        if (Auth::check() && Auth::id() === $targetUserId) {
+            return redirect()->route('investor.index')
+                ->with('error', __('all.cannot_delete_current_user'));
+        }
+
+        $investor = User::find($targetUserId);
+        if (! $investor) {
+            return redirect()->route('investor.index')
+                ->with('error', __('all.user_not_found'));
+        }
+
+        $calculation = new CalculationController();
+        $user = $investor;
         error_log('cash: '.$user->cash);
         $month_days = Carbon::now()->daysInMonth;
-        $ratio = $calculation->getInvestorCurrentRatio($id);
-        error_log('ratio: '.$ratio);
-if($ratio==0)$ratio=1;
+        $ratio = $calculation->getInvestorCurrentRatio($targetUserId);
+        if ($ratio <= 0) {
+            $ratio = 1;
+        }
         $total_month_profit = $user->cash / $ratio;
-        error_log('total_month_profit: '.$total_month_profit);
-        $profit_per_day = $total_month_profit / $month_days;
-        error_log('profit_per_day: '.$profit_per_day);
+        $profit_per_day = $month_days > 0 ? $total_month_profit / $month_days : 0;
         $days = Carbon::now()->day;
-        error_log('days: '.$days);
         $total_days_profit = $days * $profit_per_day;
-        error_log('total_days_profit: '.$total_days_profit);
-
 
         $data = array(
-            'user_id' => $id,
+            'user_id' => $targetUserId,
             'cash' => $user->cash,
             'ratio' => $ratio,
             'ratio_per_day' => $profit_per_day,
@@ -168,10 +176,7 @@ if($ratio==0)$ratio=1;
 
         $investor->update();
 
-        User::where('id',$id)->delete();
-
-
-
+        User::where('id', $targetUserId)->delete();
 
         return redirect()->route('investor.index');
     }

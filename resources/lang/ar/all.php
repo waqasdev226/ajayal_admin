@@ -8,6 +8,8 @@ return [
     'add'  => 'أضافة',
     'delete'  => 'حذف',
     'confirm_delete_investor'  => 'هل أنت متأكد من حذف هذا المستثمر؟',
+    'cannot_delete_current_user' => 'لا يمكنك حذف أو إنهاء عقد المستخدم المسجل دخوله حالياً.',
+    'user_not_found' => 'المستخدم غير موجود.',
     'edit'  => 'تعديل',
     'details'  => 'التفاصيل',
     'submit'  => 'موافق',
