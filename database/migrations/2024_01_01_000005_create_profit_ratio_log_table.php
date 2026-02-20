@@ -11,6 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('profit_ratio_log')) {
+            return;
+        }
         Schema::create('profit_ratio_log', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();

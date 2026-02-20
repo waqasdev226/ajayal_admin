@@ -11,6 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('log_system')) {
+            return;
+        }
         Schema::create('log_system', function (Blueprint $table) {
             $table->id();
             $table->string('action')->nullable();

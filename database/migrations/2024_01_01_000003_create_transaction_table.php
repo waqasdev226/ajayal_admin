@@ -11,6 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('transaction')) {
+            return;
+        }
         Schema::create('transaction', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('from')->nullable();

@@ -129,9 +129,16 @@ class UsersController extends Controller
         $data->min_ratio = Setting::where('key','min_ratio')->first()?->value ?? '';
         $data->max_ratio = Setting::where('key','max_ratio')->first()?->value ?? '';
         $data->profit_release_day = Setting::where('key','profit_release_day')->first()?->value ?? '';
-        $yearMonth = now()->format('Y-m');
-        $rate = MonthlyProfitRate::where('year_month', $yearMonth)->first();
-        $data->monthly_profit_percentage = $rate ? (string) $rate->percentage : '';
+        $data->monthly_profit_percentage = '';
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('monthly_profit_rates')) {
+                $yearMonth = now()->format('Y-m');
+                $rate = MonthlyProfitRate::where('year_month', $yearMonth)->first();
+                $data->monthly_profit_percentage = $rate ? (string) $rate->percentage : '';
+            }
+        } catch (\Throwable $e) {
+            // Table may not exist yet; show empty
+        }
         return view('portal.setting.view', [
                 'data' => $data,
                 'breadcrumb' =>  [ __('all.main'), __('all.list').' '.__('all.setting')],
@@ -146,20 +153,33 @@ class UsersController extends Controller
         Setting::where('key','min_ratio')->update(['value'=>$request->input('min_ratio')]);
         Setting::where('key','max_ratio')->update(['value'=>$request->input('max_ratio')]);
         Setting::where('key','profit_release_day')->update(['value'=>$request->input('profit_release_day')]);
-        $yearMonth = now()->format('Y-m');
-        $pct = $request->input('monthly_profit_percentage');
-        if ($pct !== null && $pct !== '') {
-            MonthlyProfitRate::updateOrCreate(
-                ['year_month' => $yearMonth],
-                ['percentage' => (float) $pct]
-            );
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('monthly_profit_rates')) {
+                $yearMonth = now()->format('Y-m');
+                $pct = $request->input('monthly_profit_percentage');
+                if ($pct !== null && $pct !== '') {
+                    MonthlyProfitRate::updateOrCreate(
+                        ['year_month' => $yearMonth],
+                        ['percentage' => (float) $pct]
+                    );
+                }
+            }
+        } catch (\Throwable $e) {
+            // Table may not exist; skip saving monthly rate
         }
         $data = new \stdClass();
         $data->min_ratio = Setting::where('key','min_ratio')->first()?->value ?? '';
         $data->max_ratio = Setting::where('key','max_ratio')->first()?->value ?? '';
         $data->profit_release_day = Setting::where('key','profit_release_day')->first()?->value ?? '';
-        $rate = MonthlyProfitRate::where('year_month', $yearMonth)->first();
-        $data->monthly_profit_percentage = $rate ? (string) $rate->percentage : '';
+        $data->monthly_profit_percentage = '';
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('monthly_profit_rates')) {
+                $yearMonth = now()->format('Y-m');
+                $rate = MonthlyProfitRate::where('year_month', $yearMonth)->first();
+                $data->monthly_profit_percentage = $rate ? (string) $rate->percentage : '';
+            }
+        } catch (\Throwable $e) {
+        }
         return view('portal.setting.view', [
                 'data' => $data,
                 'breadcrumb' =>  [ __('all.main'), __('all.list').' '.__('all.setting')],
