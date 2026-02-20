@@ -162,6 +162,9 @@ class UsersController extends Controller
                         ['year_month' => $yearMonth],
                         ['percentage' => (float) $pct]
                     );
+                } else {
+                    // Clear rate for current month so profit calculation uses legacy logic
+                    MonthlyProfitRate::where('year_month', $yearMonth)->delete();
                 }
             }
         } catch (\Throwable $e) {

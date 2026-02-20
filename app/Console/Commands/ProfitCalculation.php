@@ -19,7 +19,8 @@ class ProfitCalculation extends Command
     public function handle()
     {
         $excludeIds = config('app.exclude_investor_user_ids', [1]);
-        $yearMonth = Carbon::now()->format('Y-m');
+        $now = Carbon::now();
+        $yearMonth = $now->format('Y-m');
 
         $investors = User::where('enabled', 1)->where('cash', '>', 0)
             ->whereDate('expire_contract', '>', Carbon::now())
@@ -28,10 +29,18 @@ class ProfitCalculation extends Command
 
         $monthlyRate = MonthlyProfitRate::where('year_month', $yearMonth)->first();
 
+        $now = Carbon::now();
         foreach ($investors as $investor) {
             // Prevent duplicate: skip if this user already has a profit record for this month
             $exists = ProfitRatioLog::where('user_id', $investor->id)
-                ->where('year_month', $yearMonth)
+                ->where(function ($q) use ($yearMonth, $now) {
+                    $q->where('year_month', $yearMonth)
+                        ->orWhere(function ($q2) use ($now) {
+                            $q2->whereNull('year_month')
+                                ->whereMonth('created_at', $now->month)
+                                ->whereYear('created_at', $now->year);
+                        });
+                })
                 ->exists();
             if ($exists) {
                 continue;
@@ -58,9 +67,8 @@ class ProfitCalculation extends Command
             // Legacy ratio-based logic (when no monthly rate is set)
             $setting = Setting::where('key', 'profit_release_day')->first();
             $releaseDay = $setting ? (string) $setting->value : '01';
-            $now = Carbon::now()->format('Y-m');
             $createdStr = Carbon::parse($investor->created_at)->format('Y-m-d');
-            if ($createdStr >= $now . $releaseDay) {
+            if ($createdStr >= $yearMonth . $releaseDay) {
                 continue;
             }
             $expire = Carbon::parse($investor->expire_contract)->format('Y-m');
