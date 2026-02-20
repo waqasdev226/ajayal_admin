@@ -11,6 +11,7 @@ class ProfitRatioLog extends Model
     protected $table = 'profit_ratio_log';
     protected $fillable = [
         'user_id',
+        'year_month',
         'cash',
         'ratio',
         'ratio_per_day',

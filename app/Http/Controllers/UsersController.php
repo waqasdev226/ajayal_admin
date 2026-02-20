@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Agent;
 use App\Models\LogSystem;
+use App\Models\MonthlyProfitRate;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -125,9 +126,12 @@ class UsersController extends Controller
     function getSetting()
     {
         $data = new \stdClass();
-        $data->min_ratio = Setting::where('key','min_ratio')->first()->value;
-        $data->max_ratio = Setting::where('key','max_ratio')->first()->value;
-        $data->profit_release_day = Setting::where('key','profit_release_day')->first()->value;
+        $data->min_ratio = Setting::where('key','min_ratio')->first()?->value ?? '';
+        $data->max_ratio = Setting::where('key','max_ratio')->first()?->value ?? '';
+        $data->profit_release_day = Setting::where('key','profit_release_day')->first()?->value ?? '';
+        $yearMonth = now()->format('Y-m');
+        $rate = MonthlyProfitRate::where('year_month', $yearMonth)->first();
+        $data->monthly_profit_percentage = $rate ? (string) $rate->percentage : '';
         return view('portal.setting.view', [
                 'data' => $data,
                 'breadcrumb' =>  [ __('all.main'), __('all.list').' '.__('all.setting')],
@@ -142,10 +146,20 @@ class UsersController extends Controller
         Setting::where('key','min_ratio')->update(['value'=>$request->input('min_ratio')]);
         Setting::where('key','max_ratio')->update(['value'=>$request->input('max_ratio')]);
         Setting::where('key','profit_release_day')->update(['value'=>$request->input('profit_release_day')]);
+        $yearMonth = now()->format('Y-m');
+        $pct = $request->input('monthly_profit_percentage');
+        if ($pct !== null && $pct !== '') {
+            MonthlyProfitRate::updateOrCreate(
+                ['year_month' => $yearMonth],
+                ['percentage' => (float) $pct]
+            );
+        }
         $data = new \stdClass();
-        $data->min_ratio = Setting::where('key','min_ratio')->first()->value;
-        $data->max_ratio = Setting::where('key','max_ratio')->first()->value;
-        $data->profit_release_day = Setting::where('key','profit_release_day')->first()->value;
+        $data->min_ratio = Setting::where('key','min_ratio')->first()?->value ?? '';
+        $data->max_ratio = Setting::where('key','max_ratio')->first()?->value ?? '';
+        $data->profit_release_day = Setting::where('key','profit_release_day')->first()?->value ?? '';
+        $rate = MonthlyProfitRate::where('year_month', $yearMonth)->first();
+        $data->monthly_profit_percentage = $rate ? (string) $rate->percentage : '';
         return view('portal.setting.view', [
                 'data' => $data,
                 'breadcrumb' =>  [ __('all.main'), __('all.list').' '.__('all.setting')],
@@ -154,7 +168,6 @@ class UsersController extends Controller
             ]
         );
     }
-
 
     function systemIndex(Request $request)
     {

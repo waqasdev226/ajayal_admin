@@ -30,9 +30,11 @@
             <div class="card mb-4">
                 <h5 class="card-header">
                     @if($data->status == 1)
-                        <span class="badge bg-label-success">فعال</span>
+                        <span class="badge bg-label-success">موافق عليه</span>
+                    @elseif($data->status == 2)
+                        <span class="badge bg-label-danger">مرفوض</span>
                     @else
-                        <span class="badge bg-label-danger">غير فعال</span>
+                        <span class="badge bg-label-warning">قيد الانتظار</span>
                     @endif
                 </h5>
                 <form class="card-body">
@@ -75,7 +77,12 @@
                             <label class="form-label" for="multicol-first-name">{{__('all.note')}}</label>
                             <input type="text" id="multicol-first-name" class="form-control" value="{{ $data->note }}" disabled>
                         </div>
-
+                        @if($data->status == 2 && $data->reject_reason)
+                            <div class="col-md-12">
+                                <label class="form-label">سبب الرفض</label>
+                                <input type="text" class="form-control" value="{{ $data->reject_reason }}" disabled>
+                            </div>
+                        @endif
                     </div>
 
                     <div class="row g-3 pt-3">

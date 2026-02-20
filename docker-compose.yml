@@ -1,0 +1,22 @@
+# Run admin panel with Docker (no need for PHP on your Mac).
+# Usage:  docker compose up --build
+# Then open:  http://localhost:8000
+# Make sure MySQL is running on your Mac (DB: api_ajayal_db).
+
+services:
+  admin:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    working_dir: /app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    env_file: .env
+    environment:
+      - APP_URL=http://localhost:8000
+      # From inside Docker, use this to reach MySQL on your Mac
+      - DB_HOST=host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

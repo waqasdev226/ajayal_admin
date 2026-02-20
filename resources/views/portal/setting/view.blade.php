@@ -47,8 +47,8 @@
                             <input type="text" id="profit_release_day" name="profit_release_day" class="form-control" value="{{ $data->profit_release_day }}">
                         </div>
                         <div class="col-md-6">
-{{--                            <label class="form-label" for="max_ratio">{{__('all.max_ratio')}}</label>--}}
-{{--                            <input type="text" id="max_ratio" name="max_ratio" class="form-control" value="{{ $data->max_ratio }}">--}}
+                            <label class="form-label" for="monthly_profit_percentage">نسبة الربح الشهرية % (للمستثمرين النشطين)</label>
+                            <input type="number" step="0.01" min="0" id="monthly_profit_percentage" name="monthly_profit_percentage" class="form-control" value="{{ $data->monthly_profit_percentage ?? '' }}" placeholder="مثال: 3.5">
                         </div>
                     </div>
                     <hr class="my-4 mx-n4">

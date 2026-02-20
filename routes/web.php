@@ -114,8 +114,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/list', [\App\Http\Controllers\WithdrawController::class, 'index'])->name('withdraw-check.index');
         Route::get('/view/{id}', [\App\Http\Controllers\WithdrawController::class, 'show'])->name('withdraw-check.show');
         Route::post('/approve/{id}', [\App\Http\Controllers\WithdrawController::class, 'approve'])->name('withdraw-check.approve');
+        Route::post('/reject/{id}', [\App\Http\Controllers\WithdrawController::class, 'reject'])->name('withdraw-check.reject');
         Route::get('/export/', [WithdrawController::class, 'export'])->name('withdraw-check.export');
-
     });
 
 

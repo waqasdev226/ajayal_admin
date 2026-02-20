@@ -19,7 +19,12 @@
                 @endforeach
             </h4>
 
-
+            @if(session('status'))
+                <div class="alert alert-success alert-dismissible mb-3" role="alert">{{ session('status') }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+            @endif
+            @if(session('error'))
+                <div class="alert alert-danger alert-dismissible mb-3" role="alert">{{ session('error') }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+            @endif
             <div class="card">
                 <div class="card-header">
 {{--                    <h5 class="card-title mb-0">Filter</h5>--}}
@@ -55,10 +60,12 @@
                         <div class="col-md-3">
                             <label class="form-label" for="status">{{ __('all.status') }}</label>
                             <select id="status" name="status" class="form-select text-capitalize">
-                                <option value="-1" ></option>
-                                <option value="0" {{ $filter->status == '0' ? 'selected' : ''}}>غير فعال</option>
-                                <option value="1" {{ $filter->status == '1' ? 'selected' : ''}}>  فعال</option>
-                            </select></div>
+                                <option value="-1"></option>
+                                <option value="0" {{ (string)$filter->status === '0' ? 'selected' : '' }}>قيد الانتظار</option>
+                                <option value="1" {{ (string)$filter->status === '1' ? 'selected' : '' }}>موافق عليه</option>
+                                <option value="2" {{ (string)$filter->status === '2' ? 'selected' : '' }}>مرفوض</option>
+                            </select>
+                        </div>
                         <div class="col-md-3 pt-3">
 
 
@@ -131,21 +138,42 @@
                                     <td class="text-sm" style="direction: ltr">{{ $row->created_at ?? '-' }}</td>
                                     <td class="text-sm">
                                         @if($row->status == 1)
-                                            <span class="badge bg-label-success">فعال</span>
+                                            <span class="badge bg-label-success">موافق عليه</span>
+                                        @elseif($row->status == 2)
+                                            <span class="badge bg-label-danger">مرفوض</span>
                                         @else
-                                            <span class="badge bg-label-danger">غير فعال</span>
+                                            <span class="badge bg-label-warning">قيد الانتظار</span>
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{  route('withdraw-check.show', $row->id) }}"><i class="ti ti-eye"></i></a>
-
-                                        @if($row->status != 1)
-                                            <form action="{{ route('withdraw-check.approve', $row->id) }}" method="post">
+                                        <a href="{{ route('withdraw-check.show', $row->id) }}"><i class="ti ti-eye"></i></a>
+                                        @if($row->status == 0)
+                                            <form action="{{ route('withdraw-check.approve', $row->id) }}" method="post" class="d-inline">
                                                 @csrf
-                                                <button class="btn btn-sm btn-icon" type="submit"><i class="ti ti-checkbox"></i></button>
+                                                <button class="btn btn-sm btn-icon text-success" type="submit" title="موافقة"><i class="ti ti-checkbox"></i></button>
                                             </form>
-                                        @else
-                                            {{--                                                <span class="badge bg-label-danger">غير فعال</span>--}}
+                                            <button type="button" class="btn btn-sm btn-icon text-danger" data-bs-toggle="modal" data-bs-target="#rejectModal{{ $row->id }}" title="رفض"><i class="ti ti-x"></i></button>
+                                            <div class="modal fade" id="rejectModal{{ $row->id }}" tabindex="-1">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <form action="{{ route('withdraw-check.reject', $row->id) }}" method="post">
+                                                            @csrf
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">رفض طلب السحب</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <label class="form-label">سبب الرفض (اختياري)</label>
+                                                                <textarea name="reject_reason" class="form-control" rows="3" placeholder="سبب الرفض..."></textarea>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">إلغاء</button>
+                                                                <button type="submit" class="btn btn-danger">رفض الطلب</button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         @endif
                                         {{--                                        <div class="d-inline-block text-nowrap">--}}
                                         {{--                                            --}}{{--                                            <button class="btn btn-sm btn-icon"  type="button" data-bs-toggle="offcanvas"--}}

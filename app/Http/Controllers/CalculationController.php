@@ -12,6 +12,10 @@ use function Psy\debug;
 class CalculationController extends Controller
 {
     public function investorCalculate($id){
+        $yearMonth = Carbon::now()->format('Y-m');
+        if (ProfitRatioLog::where('user_id', $id)->where('year_month', $yearMonth)->exists()) {
+            return; // prevent duplicate profit for same month
+        }
         $investor = User::where('id',$id)->first();
         error_log('cash: '.$investor->cash);
         $month_days = Carbon::now()->daysInMonth;
@@ -25,8 +29,10 @@ class CalculationController extends Controller
         error_log('days: '.$days);
         $total_days_profit = $days * $profit_per_day;
         error_log('total_days_profit: '.$total_days_profit);
+        $yearMonth = Carbon::now()->format('Y-m');
         $data = array(
             'user_id' => $id,
+            'year_month' => $yearMonth,
             'cash' => $investor->cash,
             'ratio' => $ratio,
             'ratio_per_day' => $profit_per_day,

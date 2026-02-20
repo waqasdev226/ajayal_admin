@@ -26,12 +26,12 @@ class WithdrawController extends Controller
         $filter->status = $status;
 
 
-        $data = Withdraw::with(['userDetail' => function($query) use ($investor){
-            $query->where('name', 'like', '%'.$investor.'%');
-        }]);
-
-        if ($status > -1) {
-            $data->where('status', $status);
+        $data = Withdraw::with('userDetail');
+        if (!empty($investor)) {
+            $data->whereHas('userDetail', fn ($q) => $q->where('name', 'like', '%' . $investor . '%'));
+        }
+        if ($status !== null && $status !== '' && (int) $status > -1) {
+            $data->where('status', (int) $status);
         }
         if ($date_from) {
             $data->whereDate('created_at', '>=',  $date_from);
@@ -62,10 +62,13 @@ class WithdrawController extends Controller
         );
     }
 
-    public function approve(Request $request ,$id)
+    public function approve(Request $request, $id)
     {
         $transaction = Withdraw::where('id', $id)->first();
-        Withdraw::where('id', $id)->update(['status'=>1]);
+        if (!$transaction || (int) $transaction->status !== Withdraw::STATUS_PENDING) {
+            return redirect()->route('withdraw-check.index')->with('error', 'الطلب غير قابل للموافقة');
+        }
+        Withdraw::where('id', $id)->update(['status' => Withdraw::STATUS_APPROVED]);
         $post_data = Withdraw::find($id);
         LogController::Auditlog( 'update', 'Withdraw', $id, $transaction, $post_data, 'edit withdraw: '.$id, $request);
 
@@ -88,9 +91,26 @@ class WithdrawController extends Controller
         LogController::Auditlog( 'update', 'User', $transaction->user_id, $user, $post_user, 'update user: '.$transaction->user_id, $request);
 
         return redirect()->route('withdraw-check.index');
-
     }
 
+    public function reject(Request $request, $id)
+    {
+        $transaction = Withdraw::where('id', $id)->first();
+        if (!$transaction) {
+            return redirect()->route('withdraw-check.index')->with('error', 'طلب غير موجود');
+        }
+        if ((int) $transaction->status !== Withdraw::STATUS_PENDING) {
+            return redirect()->route('withdraw-check.index')->with('error', 'الطلب معالج مسبقاً');
+        }
+        $rejectReason = $request->input('reject_reason', '');
+        Withdraw::where('id', $id)->update([
+            'status' => Withdraw::STATUS_REJECTED,
+            'reject_reason' => $rejectReason,
+        ]);
+        $post_data = Withdraw::find($id);
+        LogController::Auditlog('update', 'Withdraw', $id, $transaction, $post_data, 'reject withdraw: ' . $id, $request);
+        return redirect()->route('withdraw-check.index')->with('status', 'تم رفض الطلب');
+    }
 
     public function export(Request $request)
     {
