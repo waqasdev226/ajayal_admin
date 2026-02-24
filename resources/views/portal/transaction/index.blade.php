@@ -126,8 +126,8 @@
                                     </td>
 
                                     <td class="text-sm">
-                                        @if($row->from == 0)
-                                            system
+                                        @if($row->from == 0 || $row->from === null)
+                                            {{ $row->method === 'manual_credit' ? 'لوحة التحكم (ربح يدوي)' : 'system' }}
                                         @else
                                             {{ $row->fromUser->name ?? '-' }}
                                         @endif
