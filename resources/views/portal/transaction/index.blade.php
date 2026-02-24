@@ -109,6 +109,8 @@
                                 <th>{{ __('all.amount') }}</th>
                                 <th>{{ __('all.currency') }}</th>
                                 <th>{{ __('all.transaction_type') }}</th>
+                                <th>ملاحظة</th>
+                                <th>أضافه (مدير)</th>
                                 <th>{{ __('all.created_at') }}</th>
                                 <th>{{ __('all.status') }}</th>
                                 <th>{{ __('all.action') }}</th>
@@ -139,8 +141,10 @@
                                         @endif
                                     </td>
                                     <td class="text-sm">{{ number_format($row->amount,2) ?? '-' }}</td>
-                                    <td class="text-sm">{{ $row->toUser->currency ?? '-' }}</td>
+                                    <td class="text-sm">{{ $row->currency ?? $row->toUser->currency ?? '-' }}</td>
                                     <td class="text-sm">{{ $row->type ?? '-' }}</td>
+                                    <td class="text-sm">{{ Str::limit($row->note, 30) ?: '-' }}</td>
+                                    <td class="text-sm">{{ $row->created_by_name ?? '-' }}</td>
                                     <td class="text-sm">{{ $row->created_at ?? '-' }}</td>
                                     <td class="text-sm">
                                         @if($row->status == 1)

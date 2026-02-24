@@ -105,6 +105,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/approve/{id}', [\App\Http\Controllers\ProfitController::class, 'approve'])->name('profit-check.approve');
     });
 
+    Route::prefix('manual-profit')->group(function () {
+        Route::get('/', [\App\Http\Controllers\ManualProfitController::class, 'index'])->name('manual-profit.index');
+        Route::post('/', [\App\Http\Controllers\ManualProfitController::class, 'store'])->name('manual-profit.store');
+    });
     Route::prefix('transaction-check')->group(function () {
         Route::get('/list', [\App\Http\Controllers\TransactionController::class, 'index'])->name('transaction-check.index');
         Route::post('/approve/{id}', [\App\Http\Controllers\TransactionController::class, 'approve'])->name('transaction-check.approve');

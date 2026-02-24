@@ -41,6 +41,12 @@
                 <div data-i18n="{{ __('all.profit') }}">{{ __('all.profit') }}</div>
             </a>
         </li>
+        <li class="menu-item  {{ Request::is( 'manual-profit/*') ? 'active' : '' }}">
+            <a href="{{ route('manual-profit.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-currency-dollar"></i>
+                <div data-i18n="إضافة ربح يدوي">إضافة ربح يدوي</div>
+            </a>
+        </li>
         <li class="menu-item  {{ Request::is( 'transaction-check/*') ? 'active' : '' }}">
             <a href="{{ route('transaction-check.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-file-dollar"></i>
