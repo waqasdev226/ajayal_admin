@@ -36,6 +36,7 @@ class User extends Authenticatable implements JWTSubject
         'max_ratio',
         'currency',
         'contract_ref',
+        'start_contract',
         'expire_contract',
         'city',
         'insurance',

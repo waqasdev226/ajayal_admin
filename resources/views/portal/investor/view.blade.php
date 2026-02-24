@@ -263,6 +263,11 @@
                                     <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
                                 </div>
                                 <div class="col-12 col-md-4 fv-plugins-icon-container">
+                                    <label class="form-label" for="start_contract">{{__('all.start_contract')}}</label>
+                                    <input type="date" id="start_contract" name="start_contract" class="form-control" value="{{ $data->start_contract ?? '' }}">
+                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
+                                </div>
+                                <div class="col-12 col-md-4 fv-plugins-icon-container">
                                     <label class="form-label" for="expire_contract">{{__('all.expire_contract')}}</label>
                                     <input type="date" id="expire_contract" name="expire_contract" class="form-control" value="{{$data->expire_contract}}">
                                     <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>

@@ -196,6 +196,11 @@
                                     </select>
                                 </div>
                                 <div class="mb-3 fv-plugins-icon-container">
+                                    <label class="form-label" for="start_contract">{{__('all.start_contract')}}*</label>
+                                    <input type="date" class="form-control" id="start_contract" name="start_contract" aria-label="">
+                                    <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>
+                                </div>
+                                <div class="mb-3 fv-plugins-icon-container">
                                     <label class="form-label" for="expire_contract">{{__('all.expire_contract')}}*</label>
                                     <input type="date" class="form-control" id="expire_contract" placeholder="" name="expire_contract" aria-label="">
                                     <div class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback"></div>

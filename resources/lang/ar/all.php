@@ -65,6 +65,7 @@ return [
     'wdr_card_no' => 'رقم البطاقة',
     'card_no' => 'رقم البطاقة',
     'contract_ref'    => 'رقم العقد',
+    'start_contract'    => 'بداية العقد',
     'expire_contract'    => 'انتهاء العقد',
     'profit'    => 'الربح',
     'total_profit'    => 'الارباح الكلية',
